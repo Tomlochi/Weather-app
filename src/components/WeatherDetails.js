@@ -15,6 +15,8 @@ class WeatherDetails extends Component {
     data.id = this.props.weather.id;
     data.name = this.props.weather.name;
     data.currentWeather = this.props.weather.main.temp;
+    data.latitude = this.props.weather.coord.lat;
+    data.longitude = this.props.weather.coord.lon;
     weatherStore.addLocationToFavorite(data);
     //weatherStore.removeLocationFromFavorite(data);
   };

@@ -11,29 +11,19 @@ import { geolocated } from "react-geolocated";
 
 const weatherStore = rootStores[WeatherStore];
 const Search = Input.Search;
-
 @observer
 class Home extends Component {
   async componentDidMount() {
     try {
-      await weatherStore.loadWeatherData2(
-        weatherStore.cityName,
-        weatherStore.countryName
-      );
-
-      await weatherStore.loadWeatherForecast(
-        weatherStore.cityName,
-        weatherStore.countryName
-      );
-      weatherStore.googlePlaceSearchApi();
+      await weatherStore.loadWeatherData();
+      await weatherStore.loadWeatherForecast();
     } catch (err) {
       throw err;
     }
   }
 
   componentDidUpdate(nextProps) {
-    console.log("nextProps", nextProps);
-    if (nextProps.isGeolocationAvailable) {
+    if (nextProps.isGeolocationEnabled) {
       if (
         this.props.coords &&
         this.props.coords.latitude &&
@@ -43,46 +33,40 @@ class Home extends Component {
           this.props.coords.latitude,
           this.props.coords.longitude
         );
+        weatherStore.loadWeatherForecast(
+          this.props.coords.latitude,
+          this.props.coords.longitude
+        );
       }
-      console.log("componentDidUpdate", toJS(weatherStore.weatherData));
     }
   }
 
-  searchByCity = cityName => {
-    console.log(cityName);
-    if (cityName) {
-      weatherStore.setCityName(cityName);
-      weatherStore.loadWeatherData(cityName);
-    }
-  };
-
-  searchByCountry = CountryName => {
-    console.log(CountryName);
-    if (CountryName) {
-      weatherStore.setCountryName(CountryName);
-      weatherStore.loadWeatherData(CountryName);
+  searchBylocation = async location => {
+    if (location) {
+      try {
+        await weatherStore.googlePlaceSearchApi(location);
+      } catch (err) {
+        throw err;
+      } finally {
+        weatherStore.loadWeatherData();
+        weatherStore.loadWeatherForecast();
+      }
     }
   };
 
   render() {
     const weather = weatherStore.weatherData;
-    const weatherForecast = weatherStore.weaterForecast;
-    // console.log("the weater is ", toJS(weather));
-    // console.log("the weaterForecast is ", toJS(weatherForecast));
+    const weatherForecast = weatherStore.weatherForecast;
+    // console.log("weather", toJS(weather));
+    // console.log("weatherForecast", toJS(weatherForecast));
     if (weather) {
       return (
         <div className="home-main-container">
           <div className="home-input-search-text">
             <Search
               className="home-input-city-search-text"
-              placeholder="Please enter a city name"
-              onSearch={value => this.searchByCity(value)}
-              enterButton
-            />
-            <Search
-              className="home-input-country-search-text"
-              placeholder="Please enter a country name"
-              onSearch={value => this.searchByCountry(value)}
+              placeholder="Please enter a city or country name"
+              onSearch={value => this.searchBylocation(value)}
               enterButton
             />
           </div>
@@ -90,8 +74,6 @@ class Home extends Component {
             <WeatherDetails weather={weather} />
             <Forecast weatherForecast={weatherForecast} />
           </div>
-          <p>{this.props.coords && this.props.coords.latitude}</p>
-          <p>{this.props.coords && this.props.coords.longitude}</p>
         </div>
       );
     } else {

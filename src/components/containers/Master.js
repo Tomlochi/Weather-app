@@ -41,7 +41,7 @@ class Master extends Component {
               <Menu.Item
                 className="tab"
                 key="2"
-                onClick={() => this.handleMenuClicked("/home")}
+                onClick={() => this.handleMenuClicked("/")}
               >
                 <Icon className="icon" fontSize={16} type="home" />
                 Home
@@ -59,7 +59,7 @@ class Master extends Component {
         </Menu>
         <Content className="content-container">
           <Switch>
-            <Route path={"/home"} exact component={Home} />
+            <Route path={"/"} exact component={Home} />
             <Route path={"/favorites"} exact component={Favorites} />
           </Switch>
         </Content>

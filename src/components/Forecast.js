@@ -11,7 +11,6 @@ class Forecast extends Component {
   componentDidMount() {
     const node = this.node;
     const data = weatherStore.getWeatherForecast;
-    console.log("aaaaaaaaaaaaaaa", data);
     new Chart(node, {
       type: "line",
       data: {

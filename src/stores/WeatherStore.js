@@ -1,18 +1,23 @@
-import { observable, action, computed } from "mobx";
+import { observable, action, computed, toJS } from "mobx";
 import WeatherService from "../services/WeatherService";
 import Weather from "../models/Weather";
+import _concat from "lodash/concat";
+import isUndefined from "lodash/isUndefined";
 
 export default class WeatherStore {
   constructor() {
-    this.loadWeatherData(this.cityName, this.countryName);
+    // this.loadWeatherData(this.location.lat, this.location.lon);
   }
   @observable weatherData = new Weather();
-  @observable weaterForecast = new Weather();
-  @observable cityName = "Tel Aviv District";
-  @observable countryName = "IL";
+  @observable weatherFavData = new Weather();
+  @observable weatherForecast = new Weather();
+  @observable favDb;
+  @observable location = { lon: "34.78176759999999", lat: "32.0852999" };
 
   @action
   loadWeatherData = async (lat, lon) => {
+    lat = lat ? lat : this.location.lat;
+    lon = lon ? lon : this.location.lon;
     return WeatherService.getWeatherData(lat, lon)
       .then(weatherData => {
         if (weatherData && weatherData.status) {
@@ -25,29 +30,20 @@ export default class WeatherStore {
   };
 
   @action
-  loadWeatherData2 = async (cityName, countryName) => {
-    return WeatherService.getWeatherData2(cityName, countryName)
-      .then(weatherData => {
-        if (weatherData && weatherData.status) {
-          this.weatherData = weatherData.data;
-        }
-      })
-      .catch(err => {
-        throw err;
-      });
+  getAllFavorites = () => {
+    this.favDb = WeatherService.getAllFavoritesFromDb();
   };
 
   @action
-  loadWeatherForecast = async (cityName, countryName) => {
-    return WeatherService.getWeatherForecast(cityName, countryName)
-      .then(weaterForecast => {
-        if (weaterForecast && weaterForecast.status) {
-          this.weaterForecast = weaterForecast.data;
-        }
-      })
-      .catch(err => {
-        throw err;
-      });
+  loadWeatherForecast = async (lat, lon) => {
+    lat = lat ? lat : this.location.lat;
+    lon = lon ? lon : this.location.lon;
+    try {
+      const weatherForecast = await WeatherService.getWeatherForecast(lat, lon);
+      this.weatherForecast = weatherForecast.data;
+    } catch (err) {
+      throw err;
+    }
   };
 
   @action
@@ -61,9 +57,12 @@ export default class WeatherStore {
   };
 
   @action
-  googlePlaceSearchApi = async () => {
-    return WeatherService.googlePlaceSearch().then(placeSearch => {
-      console.log("placeSearch ", placeSearch);
+  googlePlaceSearchApi = async location => {
+    return WeatherService.googlePlaceSearch(location).then(placeSearch => {
+      if (placeSearch && placeSearch.status) {
+        this.location.lat = placeSearch.data.results[0].geometry.location.lat;
+        this.location.lon = placeSearch.data.results[0].geometry.location.lng;
+      }
     });
   };
 
