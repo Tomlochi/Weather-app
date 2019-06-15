@@ -12,8 +12,21 @@ export default class WeatherStore {
   @observable countryName = "IL";
 
   @action
-  loadWeatherData = async (cityName, countryName) => {
-    return WeatherService.getWeatherData(cityName, countryName)
+  loadWeatherData = async (lat, lon) => {
+    return WeatherService.getWeatherData(lat, lon)
+      .then(weatherData => {
+        if (weatherData && weatherData.status) {
+          this.weatherData = weatherData.data;
+        }
+      })
+      .catch(err => {
+        throw err;
+      });
+  };
+
+  @action
+  loadWeatherData2 = async (cityName, countryName) => {
+    return WeatherService.getWeatherData2(cityName, countryName)
       .then(weatherData => {
         if (weatherData && weatherData.status) {
           this.weatherData = weatherData.data;
@@ -38,8 +51,13 @@ export default class WeatherStore {
   };
 
   @action
-  addAreaToFavorite = area => {
-    //WeatherService.
+  addLocationToFavorite = location => {
+    WeatherService.saveLocationinTOFavoritesDb(location);
+  };
+
+  @action
+  removeLocationFromFavorite = location => {
+    WeatherService.removeLocationFromFavoritesDb(location);
   };
 
   @action

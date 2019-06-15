@@ -1,10 +1,22 @@
 import React, { Component } from "react";
 import { Card, Rate } from "antd";
 import "../styles/WeatherDetails.css";
+import FavoriteLocation from "../models/FavoriteLocation";
+import rootStores from "../stores";
+import WeatherStore from "../stores/WeatherStore";
+import { observer } from "mobx-react";
 
+const weatherStore = rootStores[WeatherStore];
+
+@observer
 class WeatherDetails extends Component {
   addToFavorites = () => {
-    console.log(this.props.weather.name);
+    const data = new FavoriteLocation();
+    data.id = this.props.weather.id;
+    data.name = this.props.weather.name;
+    data.currentWeather = this.props.weather.main.temp;
+    weatherStore.addLocationToFavorite(data);
+    //weatherStore.removeLocationFromFavorite(data);
   };
 
   render() {

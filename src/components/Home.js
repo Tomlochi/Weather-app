@@ -7,6 +7,7 @@ import { Input } from "antd";
 import "../styles/Home.css";
 import Forecast from "./Forecast";
 import WeatherDetails from "./WeatherDetails";
+import { geolocated } from "react-geolocated";
 
 const weatherStore = rootStores[WeatherStore];
 const Search = Input.Search;
@@ -15,11 +16,35 @@ const Search = Input.Search;
 class Home extends Component {
   async componentDidMount() {
     try {
-      await weatherStore.loadWeatherData();
-      await weatherStore.loadWeatherForecast();
+      await weatherStore.loadWeatherData2(
+        weatherStore.cityName,
+        weatherStore.countryName
+      );
+
+      await weatherStore.loadWeatherForecast(
+        weatherStore.cityName,
+        weatherStore.countryName
+      );
       weatherStore.googlePlaceSearchApi();
     } catch (err) {
       throw err;
+    }
+  }
+
+  componentDidUpdate(nextProps) {
+    console.log("nextProps", nextProps);
+    if (nextProps.isGeolocationAvailable) {
+      if (
+        this.props.coords &&
+        this.props.coords.latitude &&
+        this.props.coords.longitude
+      ) {
+        weatherStore.loadWeatherData(
+          this.props.coords.latitude,
+          this.props.coords.longitude
+        );
+      }
+      console.log("componentDidUpdate", toJS(weatherStore.weatherData));
     }
   }
 
@@ -42,8 +67,8 @@ class Home extends Component {
   render() {
     const weather = weatherStore.weatherData;
     const weatherForecast = weatherStore.weaterForecast;
-    console.log("the weater is ", toJS(weather));
-    console.log("the weaterForecast is ", toJS(weatherForecast));
+    // console.log("the weater is ", toJS(weather));
+    // console.log("the weaterForecast is ", toJS(weatherForecast));
     if (weather) {
       return (
         <div className="home-main-container">
@@ -65,6 +90,8 @@ class Home extends Component {
             <WeatherDetails weather={weather} />
             <Forecast weatherForecast={weatherForecast} />
           </div>
+          <p>{this.props.coords && this.props.coords.latitude}</p>
+          <p>{this.props.coords && this.props.coords.longitude}</p>
         </div>
       );
     } else {
@@ -73,4 +100,11 @@ class Home extends Component {
   }
 }
 
-export default Home;
+const MainWithGeoloc = geolocated({
+  positionOptions: {
+    enableHighAccuracy: false
+  },
+  userDecisionTimeout: 5000
+})(Home);
+
+export default MainWithGeoloc;
