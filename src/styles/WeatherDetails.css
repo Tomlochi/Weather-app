@@ -1,0 +1,11 @@
+.weather-details-weather-data-card {
+  width: 300px;
+  margin-top: 20px;
+}
+
+.weather-details-weather-title {
+  display: flex;
+}
+.weather-details-weather-data {
+  margin-left: 10px;
+}

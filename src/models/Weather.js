@@ -1,5 +1,5 @@
 import { observable } from "mobx";
-
+import isUndefined from "lodash/isUndefined";
 export default class Weather {
   @observable coord;
   @observable sys;
@@ -14,7 +14,7 @@ export default class Weather {
   @observable cod;
 
   constructor(weather) {
-    if (weather) {
+    if (!isUndefined(weather)) {
       this.coord = weather.crood;
       this.sys = weather.sys;
       this.weather = weather.weather;

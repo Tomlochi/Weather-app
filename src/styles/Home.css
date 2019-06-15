@@ -8,3 +8,7 @@
 .home-input-country-search-text {
   margin-top: 10px;
 }
+
+.home-weather-details-forecast {
+  display: flex;
+}

@@ -1,7 +1,6 @@
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
 import WeatherService from "../services/WeatherService";
 import Weather from "../models/Weather";
-import { async } from "q";
 
 export default class WeatherStore {
   constructor() {
@@ -27,18 +26,20 @@ export default class WeatherStore {
 
   @action
   loadWeatherForecast = async (cityName, countryName) => {
-    cityName = "Tel Aviv District";
-    countryName = "IL";
     return WeatherService.getWeatherForecast(cityName, countryName)
       .then(weaterForecast => {
         if (weaterForecast && weaterForecast.status) {
-          console.log("i am here");
           this.weaterForecast = weaterForecast.data;
         }
       })
       .catch(err => {
         throw err;
       });
+  };
+
+  @action
+  addAreaToFavorite = area => {
+    //WeatherService.
   };
 
   @action
@@ -56,4 +57,10 @@ export default class WeatherStore {
   setCountryName = countryName => {
     this.countryName = countryName;
   };
+  @computed
+  get getWeatherForecast() {
+    if (this.weaterForecast) {
+      return this.weaterForecast;
+    } else return null;
+  }
 }
