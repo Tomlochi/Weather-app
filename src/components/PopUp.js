@@ -6,7 +6,7 @@ import WeatherStore from "../stores/WeatherStore";
 
 const weatherStore = rootStores[WeatherStore];
 @observer
-class ErrorModal extends Component {
+class PopUp extends Component {
   showModal = () => {
     weatherStore.showModal = true;
   };
@@ -22,17 +22,16 @@ class ErrorModal extends Component {
     return (
       <div>
         <Modal
-          title="Error"
+          title="Please notice !"
           visible={weatherStore.showModal}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <p>Location not found</p>
-          <p>Please try again</p>
+          <p>{weatherStore.modalText}</p>
         </Modal>
       </div>
     );
   }
 }
 
-export default ErrorModal;
+export default PopUp;

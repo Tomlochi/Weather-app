@@ -1,6 +1,8 @@
 import { observable, action, computed } from "mobx";
 import WeatherService from "../services/WeatherService";
 import Weather from "../models/Weather";
+import _isUndefined from "lodash/isUndefined";
+import ImageService from "../services/ImageService";
 
 export default class WeatherStore {
   @observable weatherData = new Weather();
@@ -9,8 +11,10 @@ export default class WeatherStore {
   @observable favDb;
   @observable location = { lon: "34.78176759999999", lat: "32.0852999" };
   @observable showModal;
+  @observable modalText;
   @observable errorValidation;
   @observable firstTime = true;
+  @observable backImage = "https://source.unsplash.com/600x400/?Tel Aviv";
 
   @action
   loadWeatherData = async (lat, lon) => {
@@ -43,6 +47,16 @@ export default class WeatherStore {
       this.weatherForecast = weatherForecast.data;
     } catch (err) {
       throw err;
+    }
+  };
+
+  @action
+  loadBackgroundImage = async location => {
+    const name = _isUndefined(location) ? "Tel Aviv" : location;
+    try {
+      this.backImage = await ImageService.getWeatherBackgroundImage(name);
+    } catch (e) {
+      throw e;
     }
   };
 
