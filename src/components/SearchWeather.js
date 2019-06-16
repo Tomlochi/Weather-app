@@ -21,13 +21,14 @@ class SearchWeather extends Component {
         weatherStore.loadWeatherForecast();
       }
     } else {
+      weatherStore.modalText = "Location didnt found, error in Search";
       weatherStore.showModal = true;
     }
   };
 
   searchValidation = e => {
     if (/[^a-zA-Z\s]/.test(e.target.value)) {
-      weatherStore.modalText = "Please use letters in the range of a-z/A-Z";
+      weatherStore.modalText = "Location didnt found, error in Search";
       weatherStore.errorValidation = true;
     } else {
       weatherStore.errorValidation = false;

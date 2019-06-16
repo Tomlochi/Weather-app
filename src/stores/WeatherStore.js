@@ -2,7 +2,6 @@ import { observable, action, computed } from "mobx";
 import WeatherService from "../services/WeatherService";
 import Weather from "../models/Weather";
 import _isUndefined from "lodash/isUndefined";
-import ImageService from "../services/ImageService";
 
 export default class WeatherStore {
   @observable weatherData = new Weather();
@@ -54,7 +53,7 @@ export default class WeatherStore {
   loadBackgroundImage = async location => {
     const name = _isUndefined(location) ? "Tel Aviv" : location;
     try {
-      this.backImage = await ImageService.getWeatherBackgroundImage(name);
+      this.backImage = await WeatherService.getWeatherBackgroundImage(name);
     } catch (e) {
       throw e;
     }
@@ -82,14 +81,6 @@ export default class WeatherStore {
     });
   };
 
-  @action
-  setCityName = cityName => {
-    this.cityName = cityName;
-  };
-  @action
-  setCountryName = countryName => {
-    this.countryName = countryName;
-  };
   @computed
   get getWeatherForecast() {
     if (this.weaterForecast) {
