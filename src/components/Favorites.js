@@ -5,6 +5,7 @@ import rootStores from "../stores";
 import WeatherStore from "../stores/WeatherStore";
 import "../styles/Favorites.css";
 import { NavLink } from "react-router-dom";
+import ViewStore from "../stores/ViewStore";
 
 const columns = [
   {
@@ -49,12 +50,15 @@ function removeLocation(location) {
   weatherStore.getAllFavorites();
 }
 
-function getWeaterData(latitude, longitude) {
+async function getWeaterData(latitude, longitude) {
   weatherStore.location.lon = longitude;
   weatherStore.location.lat = latitude;
-  weatherStore.loadWeatherData();
+  viewStore.setLoading(false);
+  weatherStore.loadWeather().then(() => {
+    viewStore.setLoading(true);
+  });
 }
-
+const viewStore = rootStores[ViewStore];
 const weatherStore = rootStores[WeatherStore];
 @observer
 class Favorites extends Component {

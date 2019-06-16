@@ -2,18 +2,30 @@ import { observable, action, computed } from "mobx";
 import WeatherService from "../services/WeatherService";
 import Weather from "../models/Weather";
 import _isUndefined from "lodash/isUndefined";
+const config = require("../configuration.json");
 
 export default class WeatherStore {
   @observable weatherData = new Weather();
   @observable weatherFavData = new Weather();
   @observable weatherForecast = new Weather();
   @observable favDb;
-  @observable location = { lon: "34.78176759999999", lat: "32.0852999" };
+  @observable location = { lon: config.defualtLon, lat: config.defualtLat };
   @observable showModal;
   @observable modalText;
   @observable errorValidation;
   @observable firstTime = true;
-  @observable backImage = "https://source.unsplash.com/600x400/?Tel Aviv";
+  @observable backImage = config.defultImage;
+
+  @action
+  loadWeather = async () => {
+    try {
+      await this.loadWeatherData();
+      await this.loadWeatherForecast();
+      return true;
+    } catch (err) {
+      console.error(err); //console.log or console.error
+    }
+  };
 
   @action
   loadWeatherData = async (lat, lon) => {
@@ -33,11 +45,6 @@ export default class WeatherStore {
   };
 
   @action
-  getAllFavorites = () => {
-    this.favDb = WeatherService.getAllFavoritesFromDb();
-  };
-
-  @action
   loadWeatherForecast = async (lat, lon) => {
     lat = lat ? lat : this.location.lat;
     lon = lon ? lon : this.location.lon;
@@ -51,12 +58,17 @@ export default class WeatherStore {
 
   @action
   loadBackgroundImage = async location => {
-    const name = _isUndefined(location) ? "Tel Aviv" : location;
+    const name = _isUndefined(location) ? config.defualtCity : location;
     try {
       this.backImage = await WeatherService.getWeatherBackgroundImage(name);
     } catch (e) {
       throw e;
     }
+  };
+
+  @action
+  getAllFavorites = () => {
+    this.favDb = WeatherService.getAllFavoritesFromDb();
   };
 
   @action
@@ -72,10 +84,11 @@ export default class WeatherStore {
   @action
   googlePlaceSearchApi = async location => {
     return WeatherService.googlePlaceSearch(location).then(placeSearch => {
-      if (placeSearch && placeSearch.data.status !== "ZERO_RESULTS") {
+      if (placeSearch && placeSearch.data.status !== config.googleapisError) {
         this.location.lat = placeSearch.data.results[0].geometry.location.lat;
         this.location.lon = placeSearch.data.results[0].geometry.location.lng;
       } else {
+        this.modalText = config.errorMessage;
         this.showModal = true;
       }
     });

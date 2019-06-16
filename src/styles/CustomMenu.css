@@ -1,0 +1,24 @@
+.herolo-logo {
+  width: 120px;
+  cursor: pointer;
+}
+.tab {
+  font-size: 16px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.tab-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.icon {
+  padding-right: 5px;
+}
+.menu-master {
+  line-height: 50px;
+}
+
+.tab-container :hover {
+  text-decoration: underline solid blue;
+}

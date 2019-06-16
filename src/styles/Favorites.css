@@ -2,3 +2,7 @@
   color: blue;
   cursor: pointer;
 }
+
+.ant-pagination.ant-table-pagination {
+  width: 100%;
+}

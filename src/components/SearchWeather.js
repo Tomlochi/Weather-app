@@ -4,31 +4,35 @@ import rootStores from "../stores";
 import WeatherStore from "../stores/WeatherStore";
 import { Input } from "antd";
 import PopUp from "./PopUp";
+import ViewStore from "../stores/ViewStore";
+const config = require("../configuration.json");
 
 const Search = Input.Search;
 
 const weatherStore = rootStores[WeatherStore];
+const viewStore = rootStores[ViewStore];
 @observer
 class SearchWeather extends Component {
   searchBylocation = async location => {
     if (location && !weatherStore.errorValidation) {
       try {
+        viewStore.setLoading(false);
         await weatherStore.googlePlaceSearchApi(location);
       } catch (err) {
         throw err;
       } finally {
-        weatherStore.loadWeatherData();
-        weatherStore.loadWeatherForecast();
+        weatherStore.loadWeather();
+        viewStore.setLoading(true);
       }
     } else {
-      weatherStore.modalText = "Location didnt found, error in Search";
+      weatherStore.modalText = config.errorMessage;
       weatherStore.showModal = true;
     }
   };
 
   searchValidation = e => {
     if (/[^a-zA-Z\s]/.test(e.target.value)) {
-      weatherStore.modalText = "Location didnt found, error in Search";
+      weatherStore.modalText = config.errorMessage;
       weatherStore.errorValidation = true;
     } else {
       weatherStore.errorValidation = false;

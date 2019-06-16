@@ -26,6 +26,7 @@ class PopUp extends Component {
           visible={weatherStore.showModal}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          footer={null}
         >
           <p>{weatherStore.modalText}</p>
         </Modal>

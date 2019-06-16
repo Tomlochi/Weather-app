@@ -8,6 +8,7 @@ import WeatherStore from "../stores/WeatherStore";
 import WeatherIcon from "./WeatherIcon";
 import FavoriteLocation from "../models/FavoriteLocation";
 import PopUp from "./PopUp";
+const config = require("../configuration.json");
 const { Text, Title } = Typography;
 
 const weatherStore = rootStores[WeatherStore];
@@ -48,7 +49,7 @@ class WeatherBox extends Component {
     data.latitude = this.props.weather.coord.lat;
     data.longitude = this.props.weather.coord.lon;
     weatherStore.addLocationToFavorite(data);
-    weatherStore.modalText = "Sucessfully added to favorites";
+    weatherStore.modalText = config.sucessMessage;
     weatherStore.showModal = true;
   };
 

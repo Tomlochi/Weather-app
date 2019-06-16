@@ -7,17 +7,17 @@ import WeatherStore from "../stores/WeatherStore";
 import "../styles/Home.css";
 import SearchWeather from "./SearchWeather";
 import WeatherBox from "./WheaterBox";
+import ViewStore from "../stores/ViewStore";
 
 const weatherStore = rootStores[WeatherStore];
+const viewStore = rootStores[ViewStore];
 @observer
 class Home extends Component {
-  async componentDidMount() {
-    try {
-      await weatherStore.loadWeatherData();
-      await weatherStore.loadWeatherForecast();
-    } catch (err) {
-      throw err;
-    }
+  componentDidMount() {
+    viewStore.setLoading(false);
+    weatherStore.loadWeather().then(() => {
+      viewStore.setLoading(true);
+    });
   }
 
   componentDidUpdate(nextProps) {
@@ -29,8 +29,10 @@ class Home extends Component {
       ) {
         weatherStore.location.lon = this.props.coords.longitude;
         weatherStore.location.lat = this.props.coords.latitude;
-        weatherStore.loadWeatherData();
-        weatherStore.loadWeatherForecast();
+        viewStore.setLoading(false);
+        weatherStore.loadWeather().then(() => {
+          viewStore.setLoading(true);
+        });
       }
       weatherStore.firstTime = false;
     }
@@ -42,7 +44,7 @@ class Home extends Component {
     if (weather && weatherForecast) {
       return (
         <div className="home-main-container">
-          <Row type="flex" justify="center" style={{ marginBottom: 20 }}>
+          <Row className="home-main-row" type="flex" justify="center">
             <Col>
               <SearchWeather />
             </Col>
