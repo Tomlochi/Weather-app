@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Table, Divider, Tag } from "antd";
-import { toJS } from "mobx";
+import { Table } from "antd";
 import { observer } from "mobx-react";
 import rootStores from "../stores";
 import WeatherStore from "../stores/WeatherStore";
@@ -30,13 +29,30 @@ const columns = [
     title: "Current Weather",
     dataIndex: "currentWeather",
     key: "currentWeather"
+  },
+  {
+    title: "Action",
+    key: "action",
+    render: (text, record) => (
+      <div
+        className="favorites-item-clickable"
+        onClick={() => removeLocation(record)}
+      >
+        Delete
+      </div>
+    )
   }
 ];
+
+function removeLocation(location) {
+  weatherStore.removeLocationFromFavorite(location);
+  weatherStore.getAllFavorites();
+}
 
 function getWeaterData(latitude, longitude) {
   weatherStore.location.lon = longitude;
   weatherStore.location.lat = latitude;
-  weatherStore.loadWeatherData(latitude, longitude);
+  weatherStore.loadWeatherData();
 }
 
 const weatherStore = rootStores[WeatherStore];

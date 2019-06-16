@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import rootStores from "../stores";
-import WeatherStore from "../stores/WeatherStore";
 
 var Chart = require("chart.js");
 
-const weatherStore = rootStores[WeatherStore];
 @observer
 class Forecast extends Component {
   componentDidMount() {
     const node = this.node;
-    const data = weatherStore.getWeatherForecast;
     new Chart(node, {
       type: "line",
       data: {

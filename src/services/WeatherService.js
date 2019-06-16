@@ -1,8 +1,4 @@
 import axios from "axios";
-import FavoriteLocation from "../models/FavoriteLocation";
-import _assign from "lodash/assign";
-import _forIn from "lodash/forIn";
-import _uniqBy from "lodash/uniqBy";
 
 class WeatherService {
   getWeatherData = async (lat, lon) => {
@@ -22,7 +18,7 @@ class WeatherService {
 
   getWeatherForecast = async (lat, lon) => {
     const list = [];
-    var index = 0;
+    let index = 0;
     if (lat && lon) {
       const url = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=7ce29d6123a0d66008cf12b0c502470a
       `;
@@ -30,7 +26,6 @@ class WeatherService {
         const weatherForecast = await axios.get(url);
         if (weatherForecast && weatherForecast.status) {
           if (weatherForecast.data.list) {
-            //TODO traslate to lodash filter
             for (let i = 0; i < weatherForecast.data.list.length; i++) {
               if (i % 8 === 0) {
                 list[index] = weatherForecast.data.list[i];
