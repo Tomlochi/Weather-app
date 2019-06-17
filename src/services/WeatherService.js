@@ -3,7 +3,7 @@ import axios from "axios";
 class WeatherService {
   getWeatherData = async (lat, lon) => {
     if (lat && lon) {
-      const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=7ce29d6123a0d66008cf12b0c502470a
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=7ce29d6123a0d66008cf12b0c502470a
       `;
       try {
         const weather = await axios.get(url);
@@ -20,7 +20,7 @@ class WeatherService {
     const list = [];
     let index = 0;
     if (lat && lon) {
-      const url = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=7ce29d6123a0d66008cf12b0c502470a
+      const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=7ce29d6123a0d66008cf12b0c502470a
       `;
       try {
         const weatherForecast = await axios.get(url);
